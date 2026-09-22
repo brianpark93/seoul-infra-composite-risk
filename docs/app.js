@@ -18,6 +18,7 @@ const RAMP_RGB = RAMP.map(h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5)
 const BANDS = [[0,'관심'],[0.25,'주의'],[0.5,'경계'],[0.75,'심각']];
 
 function rampRGB(v) {
+  if (!Number.isFinite(v)) v = 0;
   const x = Math.max(0, Math.min(1, v)) * (RAMP_RGB.length - 1);
   const i = Math.min(Math.floor(x), RAMP_RGB.length - 2), f = x - i;
   const a = RAMP_RGB[i], b = RAMP_RGB[i+1];
@@ -224,6 +225,7 @@ function buildField(scn, view) {
 }
 
 function paintField(F, vals, g, view) {
+  if (!F || vals.length !== F.n) return;   // 시나리오 전환 도중의 낡은 격자
   const d = F.img.data;
   for (let o = 0; o < F.GW * F.GH; o++) {
     let s = 0;
@@ -445,7 +447,10 @@ function recompute(resetTime) {
   S.res = solve(S.scn, S.direct[S.tag], { K: S.K, form: S.form, interdep: S.interdep });
   if (resetTime) { S.ti = 0; $('time').value = 0; }
   renderKList();
-  updatePanels(); render();
+  updatePanels();
+  // 시나리오를 바꾼 직후에는 field/base 가 아직 이전 시나리오 것이다.
+  // 그대로 그리면 시설물 수가 달라 값 배열을 벗어나 예외가 난다 → resize() 가 다시 그린다.
+  if (S.field && S.field.n === S.scn.facilities.length) render();
 }
 
 function resize() {
@@ -536,7 +541,14 @@ function writeHash() {
   }).join('');
   $('scnTabs').addEventListener('click', e => {
     const b = e.target.closest('button');
-    if (b) { setPlaying(false); loadScenario(b.dataset.tag).then(writeHash); }
+    if (b) {
+      setPlaying(false);
+      loadScenario(b.dataset.tag).then(writeHash).catch(err => {
+        console.error('시나리오 전환 실패', err);
+        $('eventLabel').textContent = '시나리오를 불러오지 못했습니다';
+        $('eventLabel').style.color = '#a50026';
+      });
+    }
   });
 
   $('time').addEventListener('input', () => {
