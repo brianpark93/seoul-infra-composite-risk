@@ -18,8 +18,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -165,6 +167,25 @@ def export_scenario(tag):
     }
 
 
+def stamp_assets():
+    """index.html 의 app.js / style.css 에 내용 해시를 붙여 캐시를 무력화한다.
+
+    GitHub Pages 는 정적자산에 캐시 헤더를 붙이므로, 파일을 고쳐도 브라우저가
+    옛 버전을 계속 쓴다. 쿼리스트링에 해시를 박으면 내용이 바뀔 때만 새로 받는다.
+    """
+    idx = WEB.parent / "index.html"
+    html = idx.read_text(encoding="utf-8")
+    for name in ("app.js", "style.css"):
+        f = WEB.parent / name
+        if not f.exists():
+            continue
+        h = hashlib.sha1(f.read_bytes()).hexdigest()[:8]
+        pattern = re.escape(name) + r'(\?v=[0-9a-f]+)?"'
+        html = re.sub(pattern, f'{name}?v={h}"', html)
+    idx.write_text(html, encoding="utf-8")
+    return idx
+
+
 def main():
     WEB.mkdir(parents=True, exist_ok=True)
     scenarios = []
@@ -185,6 +206,9 @@ def main():
     (WEB / "scenarios.json").write_text(
         json.dumps({"order": ORDER, "scenarios": scenarios},
                    ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+    stamp_assets()
+    print("  index.html 자산 해시 갱신 (캐시 무력화)")
 
     total = sum(p.stat().st_size for p in WEB.glob("*.json"))
     print(f"\n  총 {len(list(WEB.glob('*.json')))}개 파일 · {total/1024/1024:.2f} MB")
