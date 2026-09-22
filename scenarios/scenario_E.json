@@ -1,0 +1,367 @@
+{
+  "id": "Scenario E",
+  "title_ko": "터널 화재 연쇄 (실사례 기반)",
+  "title_en": "Tunnel fire cascade",
+  "subtitle_ko": "교통사고 → 화재 → 구조물 붕괴",
+  "trigger_ko": "터널 내 차량 추돌",
+  "source_ko": "재난안전AI_샘플시나리오_도식_v4_1.pptx, slide 5 · 근거사례 2022.12 제2경인고속도로 방음터널 화재",
+  "timescale_note_ko": "4개 시나리오 중 가장 빠른 사상. 해석시간 2시간. 회의록(260918) 기준 '1시간 이내 종료 상황은 실시간 갱신 중요도가 낮다'는 판단을 정량적으로 확인하기 위한 케이스.",
+  "analysis": {
+    "start_hour": 0.0,
+    "end_hour": 2.0,
+    "dt_hour": 0.0005,
+    "save_interval_hour": 0.025,
+    "risk_min": 0.0,
+    "risk_max": 1.0,
+    "transfer_form": "diffusive"
+  },
+  "facilities": [
+    {
+      "key": "tunnel",
+      "name_ko": "터널 구조체·방음구조체",
+      "name_en": "Tunnel structure",
+      "color": "#D62728",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[D] 차량 화재 발생 → [D] 방음구조체 연소 확대 → [D] 방음판 낙하 → [F] 터널 통행 기능 상실. '가연성 방음판(PMMA)'은 노드가 아니라 취약성 V를 높이는 인자로 반영했다.",
+      "layout": [
+        0.0,
+        1.4
+      ],
+      "direct_risk": {
+        "interpolation": "pchip",
+        "time_hour": [
+          0.0,
+          0.1,
+          0.3,
+          0.5,
+          1.0,
+          1.5,
+          2.0
+        ],
+        "value": [
+          0.06,
+          0.28,
+          0.52,
+          0.68,
+          0.79,
+          0.83,
+          0.845
+        ]
+      },
+      "map_xy": [
+        0,
+        10
+      ],
+      "short_ko": "터널 구조체",
+      "short_en": "Tunnel",
+      "depth_m": -30.0
+    },
+    {
+      "key": "smoke_control",
+      "name_ko": "제연·배연 설비",
+      "name_en": "Smoke control system",
+      "color": "#7C3AED",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[F] 제연·배연 실패. 대피 가능 시간이 이 설비 단독 성능에 의존하는 단일 실패점. 터널과 양방향 루프를 구성한다.",
+      "layout": [
+        2.3,
+        1.4
+      ],
+      "direct_risk": {
+        "interpolation": "pchip",
+        "time_hour": [
+          0.0,
+          0.1,
+          0.3,
+          0.5,
+          1.0,
+          1.5,
+          2.0
+        ],
+        "value": [
+          0.05,
+          0.07,
+          0.18,
+          0.26,
+          0.3,
+          0.315,
+          0.32
+        ]
+      },
+      "map_xy": [
+        250,
+        -90
+      ],
+      "short_ko": "제연·배연 설비",
+      "short_en": "Smoke control",
+      "depth_m": -5.0
+    },
+    {
+      "key": "road_network",
+      "name_ko": "광역 도로망",
+      "name_en": "Regional road network",
+      "color": "#F59E0B",
+      "directly_exposed": false,
+      "node_kind": "facility",
+      "note_ko": "[F] 양방향 차로 통제 → [F] 광역 우회 정체. 화재에 직접 노출되지 않으며 터널 통행 차단 전이로만 위험이 증가.",
+      "layout": [
+        2.3,
+        -0.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0.0,
+          0.1,
+          0.3,
+          0.5,
+          1.0,
+          1.5,
+          2.0
+        ],
+        "value": [
+          0.03,
+          0.03,
+          0.031,
+          0.031,
+          0.032,
+          0.032,
+          0.033
+        ]
+      },
+      "map_xy": [
+        -430,
+        -190
+      ],
+      "short_ko": "광역 도로망",
+      "short_en": "Road network",
+      "depth_m": 0.0
+    },
+    {
+      "key": "emergency",
+      "name_ko": "대피·응급대응",
+      "name_en": "Egress and emergency response",
+      "color": "#2563EB",
+      "directly_exposed": false,
+      "node_kind": "function",
+      "note_ko": "[C] 연기 질식 인명피해 · [C] 응급차량 접근 지연. 제연 실패와 광역 정체 두 경로의 수렴 노드.",
+      "layout": [
+        4.6,
+        0.6
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0.0,
+          0.1,
+          0.3,
+          0.5,
+          1.0,
+          1.5,
+          2.0
+        ],
+        "value": [
+          0.025,
+          0.025,
+          0.026,
+          0.026,
+          0.027,
+          0.027,
+          0.027
+        ]
+      },
+      "map_xy": [
+        -360,
+        150
+      ],
+      "short_ko": "대피·응급대응",
+      "short_en": "Egress/EMS",
+      "depth_m": 0.0
+    }
+  ],
+  "links": [
+    {
+      "key": "tunnel_to_smoke",
+      "source": "tunnel",
+      "target": "smoke_control",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "화염·열부하와 급격한 연기 발생량이 제연·배연 설비의 설계 용량을 초과시킴",
+      "activation_time_hour": 0.1,
+      "activation_condition_ko": "차량 화재 발생, 연기 발생 개시",
+      "D": 0.4,
+      "C": 0.75,
+      "B": 0.2,
+      "tau_hour": 0.15,
+      "evidence_ko": "설비 성능저하 중 화재 열부하 기여분. 내열 덕트·이중화가 20% 상쇄.",
+      "evidence_level": "② 공학모형·시뮬레이션"
+    },
+    {
+      "key": "smoke_to_tunnel",
+      "source": "smoke_control",
+      "target": "tunnel",
+      "dependency_type": "서비스 공급 (역방향)",
+      "mechanism_ko": "제연 실패로 고온 연기가 터널 내에 축적되어 방음구조체 연소 확대·구조 손상을 가속 (단일 실패점 증폭 루프)",
+      "activation_time_hour": 0.3,
+      "activation_condition_ko": "제연·배연 실패 확정, 연기층 하강",
+      "D": 0.65,
+      "C": 0.85,
+      "B": 0.1,
+      "tau_hour": 0.2,
+      "evidence_ko": "2022.12 제2경인고속도로 방음터널 화재. 제연 실패가 연소 확대의 결정적 인자.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "smoke_to_emergency",
+      "source": "smoke_control",
+      "target": "emergency",
+      "dependency_type": "서비스 공급",
+      "mechanism_ko": "연기 축적으로 대피 가능 시간(ASET)이 급감하여 질식 인명피해 위험 증가",
+      "activation_time_hour": 0.3,
+      "activation_condition_ko": "제연·배연 실패, 피난로 연기 침투",
+      "D": 0.85,
+      "C": 0.9,
+      "B": 0.15,
+      "tau_hour": 0.1,
+      "evidence_ko": "대피 가능 시간이 제연설비 단독 성능에 의존(핵심 의존관계). 피난연결통로가 15% 상쇄.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "tunnel_to_network",
+      "source": "tunnel",
+      "target": "road_network",
+      "dependency_type": "서비스 공급",
+      "mechanism_ko": "터널 통행 기능 상실 → 양방향 차로 통제 → 광역 우회 정체",
+      "activation_time_hour": 0.4,
+      "activation_condition_ko": "양방향 차로 통제 시행",
+      "D": 0.35,
+      "C": 0.8,
+      "B": 0.4,
+      "tau_hour": 0.25,
+      "evidence_ko": "광역 도로망 용량 중 해당 터널 분담률이 D. 우회 노선이 40% 상쇄.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "network_to_emergency",
+      "source": "road_network",
+      "target": "emergency",
+      "dependency_type": "서비스 공급",
+      "mechanism_ko": "광역 우회 정체로 응급차량 진입 시간이 지연됨",
+      "activation_time_hour": 0.8,
+      "activation_condition_ko": "우회 정체 확산, 진입로 포화",
+      "D": 0.45,
+      "C": 0.7,
+      "B": 0.35,
+      "tau_hour": 0.3,
+      "evidence_ko": "긴급차량 전용차로·갓길 진입이 35% 상쇄.",
+      "evidence_level": "③ 구조화된 전문가판단"
+    }
+  ],
+  "events": [
+    {
+      "time_hour": 0.1,
+      "label_ko": "차량 화재 발생",
+      "label_en": "Vehicle fire",
+      "color": "#475569",
+      "label_y": 0.78
+    },
+    {
+      "time_hour": 0.3,
+      "label_ko": "제연·배연 실패",
+      "label_en": "Smoke control fails",
+      "color": "#DC2626",
+      "label_y": 0.93
+    },
+    {
+      "time_hour": 0.4,
+      "label_ko": "양방향 차로 통제",
+      "label_en": "Both directions closed",
+      "color": "#B45309",
+      "label_y": 0.86
+    },
+    {
+      "time_hour": 0.8,
+      "label_ko": "응급차량 접근 지연",
+      "label_en": "Emergency access delayed",
+      "color": "#2563EB",
+      "label_y": 0.93
+    }
+  ],
+  "site": {
+    "name_ko": "서울 남산1호터널 (중구)",
+    "name_en": "Namsan Tunnel No.1, Seoul",
+    "origin_ko": "기준점: 남산1호터널 중앙부 (약 37.5525 N, 126.9880 E) · 근거사례는 2022.12 제2경인고속도로 방음터널 화재",
+    "trigger_facility": "tunnel",
+    "view": "plan",
+    "axis_note_ko": "평면도(2D). x = 동서 방향 [m], y = 남북 방향 [m], 기준점 기준 상대좌표. 시설물 위치는 공개 지점 기준의 개념 배치이며 실제 시설물 대장 좌표가 아니다.",
+    "basemap": [
+      {
+        "name_ko": "남산1호터널",
+        "name_en": "Namsan Tunnel No.1",
+        "kind": "tunnel",
+        "width": 6.0,
+        "pts": [
+          [
+            -380,
+            150
+          ],
+          [
+            -120,
+            60
+          ],
+          [
+            120,
+            -40
+          ],
+          [
+            360,
+            -130
+          ]
+        ]
+      },
+      {
+        "name_ko": "삼일대로",
+        "name_en": "Samil-daero",
+        "kind": "road",
+        "width": 6.5,
+        "pts": [
+          [
+            -520,
+            240
+          ],
+          [
+            -330,
+            120
+          ],
+          [
+            -300,
+            -260
+          ]
+        ]
+      },
+      {
+        "name_ko": "소월로",
+        "name_en": "Sowol-ro",
+        "kind": "road",
+        "width": 5.0,
+        "pts": [
+          [
+            260,
+            240
+          ],
+          [
+            420,
+            -40
+          ],
+          [
+            300,
+            -280
+          ]
+        ]
+      }
+    ],
+    "osm_key": "namsan",
+    "basemap_source": "© OpenStreetMap contributors (ODbL), Overpass API 경유"
+  }
+}

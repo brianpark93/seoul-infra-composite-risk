@@ -1,0 +1,407 @@
+{
+  "id": "Scenario C",
+  "title_ko": "대형 시설물 붕괴 연쇄 (강남·중구 예시)",
+  "title_en": "Major structure collapse cascade",
+  "subtitle_ko": "구조물 붕괴 → 설비·동력 상실 → 폭발",
+  "trigger_ko": "교량 붕괴 (정밀점검 지적 후 보강 미이행)",
+  "source_ko": "재난안전AI_샘플시나리오_도식_v4_1.pptx, slide 4",
+  "timescale_note_ko": "외부 자연재난 H가 없고 시설물 붕괴 자체가 트리거인 유일한 시나리오. 붕괴 직후 6시간을 해석하며, 나머지 시설물의 위험 증가는 전량 상호의존 전이에서 발생한다.",
+  "analysis": {
+    "start_hour": 0.0,
+    "end_hour": 6.0,
+    "dt_hour": 0.001,
+    "save_interval_hour": 0.05,
+    "risk_min": 0.0,
+    "risk_max": 1.0,
+    "transfer_form": "diffusive"
+  },
+  "facilities": [
+    {
+      "key": "bridge",
+      "name_ko": "교량 (고가차도)",
+      "name_en": "Elevated bridge",
+      "color": "#D62728",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[S] 정밀점검 지적 미조치 → [T] 교량 붕괴. '정밀점검 지적 미조치'는 네트워크 노드가 아니라 취약성 V를 높이는 인자로 반영했다(t=0 기본위험도 0.25).",
+      "layout": [
+        0.0,
+        1.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0.0,
+          0.2,
+          0.25,
+          1.0,
+          2.0,
+          4.0,
+          6.0
+        ],
+        "value": [
+          0.25,
+          0.25,
+          0.88,
+          0.92,
+          0.93,
+          0.935,
+          0.94
+        ]
+      },
+      "map_xy": [
+        0,
+        0
+      ],
+      "short_ko": "교량",
+      "short_en": "Bridge",
+      "depth_m": 9.0
+    },
+    {
+      "key": "adjacent",
+      "name_ko": "인접 구조물",
+      "name_en": "Adjacent structure",
+      "color": "#7C3AED",
+      "directly_exposed": false,
+      "node_kind": "facility",
+      "note_ko": "[D] 인접 구조물 균열. 붕괴 충격·진동과 후속 가스 폭발의 두 경로로 전이를 받는다.",
+      "layout": [
+        2.4,
+        2.7
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0.0,
+          0.25,
+          1.0,
+          2.0,
+          4.0,
+          6.0
+        ],
+        "value": [
+          0.04,
+          0.04,
+          0.041,
+          0.041,
+          0.042,
+          0.042
+        ]
+      },
+      "map_xy": [
+        -130,
+        90
+      ],
+      "short_ko": "인접 구조물",
+      "short_en": "Adjacent bldg",
+      "depth_m": 0.0
+    },
+    {
+      "key": "road",
+      "name_ko": "도로",
+      "name_en": "Road",
+      "color": "#F59E0B",
+      "directly_exposed": false,
+      "node_kind": "facility",
+      "note_ko": "[D] 붕괴 잔해 도로 점유 → [F] 도로 차단 및 교통 마비.",
+      "layout": [
+        2.4,
+        1.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0.0,
+          0.25,
+          1.0,
+          2.0,
+          4.0,
+          6.0
+        ],
+        "value": [
+          0.03,
+          0.03,
+          0.031,
+          0.031,
+          0.032,
+          0.032
+        ]
+      },
+      "map_xy": [
+        20,
+        -115
+      ],
+      "short_ko": "도로",
+      "short_en": "Road",
+      "depth_m": 0.0
+    },
+    {
+      "key": "gasline",
+      "name_ko": "매설 가스관",
+      "name_en": "Buried gas pipeline",
+      "color": "#16A34A",
+      "directly_exposed": false,
+      "node_kind": "facility",
+      "note_ko": "[D] 매설 가스관 파단 → [S] 가스 누출 축적 → [D] 누출 가스 폭발. 폭발 시점(t=2.5h)부터 역으로 인접 구조물·대응체계에 전이한다.",
+      "layout": [
+        2.4,
+        -0.3
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0.0,
+          0.25,
+          1.0,
+          2.0,
+          4.0,
+          6.0
+        ],
+        "value": [
+          0.035,
+          0.035,
+          0.035,
+          0.036,
+          0.036,
+          0.036
+        ]
+      },
+      "map_xy": [
+        125,
+        -25
+      ],
+      "short_ko": "매설 가스관",
+      "short_en": "Gas pipeline",
+      "depth_m": -1.5
+    },
+    {
+      "key": "emergency",
+      "name_ko": "구조·구급 대응",
+      "name_en": "Emergency response",
+      "color": "#2563EB",
+      "directly_exposed": false,
+      "node_kind": "function",
+      "note_ko": "[F] 구조·구급 접근 차단 → [C] 구조 지연에 따른 인명피해. 시설물이 아닌 대응기능 노드. 세 경로(인접구조물·도로·가스관)에서 동시에 전이를 받는 수렴 노드.",
+      "layout": [
+        4.8,
+        1.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0.0,
+          0.25,
+          1.0,
+          2.0,
+          4.0,
+          6.0
+        ],
+        "value": [
+          0.02,
+          0.02,
+          0.02,
+          0.021,
+          0.021,
+          0.021
+        ]
+      },
+      "map_xy": [
+        275,
+        70
+      ],
+      "short_ko": "구조·구급",
+      "short_en": "Emergency",
+      "depth_m": 0.0
+    }
+  ],
+  "links": [
+    {
+      "key": "bridge_to_adjacent",
+      "source": "bridge",
+      "target": "adjacent",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "붕괴 충격·진동 및 낙하 잔해가 인접 구조물에 균열을 유발",
+      "activation_time_hour": 0.25,
+      "activation_condition_ko": "교량 붕괴 발생",
+      "D": 0.45,
+      "C": 0.7,
+      "B": 0.2,
+      "tau_hour": 0.2,
+      "evidence_ko": "이격거리에 따라 의존도 D가 결정된다. 구조물 자체 내력이 20% 상쇄.",
+      "evidence_level": "② 공학모형·시뮬레이션"
+    },
+    {
+      "key": "bridge_to_road",
+      "source": "bridge",
+      "target": "road",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "붕괴 잔해가 하부 도로를 점유하여 통행 기능을 상실시킴",
+      "activation_time_hour": 0.25,
+      "activation_condition_ko": "교량 붕괴 발생, 잔해 낙하",
+      "D": 0.9,
+      "C": 0.95,
+      "B": 0.15,
+      "tau_hour": 0.15,
+      "evidence_ko": "2026 서소문 고가차도 붕괴. 하부 도로 차단은 사실상 즉시·전면적. 우회로가 15% 상쇄.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "bridge_to_gasline",
+      "source": "bridge",
+      "target": "gasline",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "붕괴 충격하중이 하부 매설 가스관에 전달되어 관 파단",
+      "activation_time_hour": 0.25,
+      "activation_condition_ko": "교량 붕괴 발생, 충격하중 지중 전달",
+      "D": 0.55,
+      "C": 0.8,
+      "B": 0.05,
+      "tau_hour": 0.3,
+      "evidence_ko": "매설관 파단은 대체·백업이 거의 없다(B=0.05). 매설 심도·이격이 D를 좌우.",
+      "evidence_level": "② 공학모형·시뮬레이션"
+    },
+    {
+      "key": "gasline_to_adjacent",
+      "source": "gasline",
+      "target": "adjacent",
+      "dependency_type": "물리적 전달 (2차 재난)",
+      "mechanism_ko": "누출 가스 축적 후 폭발 → 인접 구조물 추가 손상",
+      "activation_time_hour": 2.5,
+      "activation_condition_ko": "가스 누출 축적이 폭발하한계(LEL)를 초과하고 점화원 존재",
+      "D": 0.6,
+      "C": 0.85,
+      "B": 0.1,
+      "tau_hour": 0.8,
+      "evidence_ko": "가스 차단밸브 조작이 성공하면 B가 크게 오른다. 여기서는 접근 차단으로 차단 실패를 가정.",
+      "evidence_level": "③ 구조화된 전문가판단"
+    },
+    {
+      "key": "adjacent_to_emergency",
+      "source": "adjacent",
+      "target": "emergency",
+      "dependency_type": "정보·제어 / 운영",
+      "mechanism_ko": "인접 구조물 2차 붕괴 우려로 구조·구급 진입이 차단됨 (핵심 의존관계)",
+      "activation_time_hour": 0.5,
+      "activation_condition_ko": "구조물 안정성 미확보 판정",
+      "D": 0.5,
+      "C": 0.75,
+      "B": 0.25,
+      "tau_hour": 0.4,
+      "evidence_ko": "긴급 안전진단·가설 보강으로 25% 상쇄 가능.",
+      "evidence_level": "③ 구조화된 전문가판단"
+    },
+    {
+      "key": "road_to_emergency",
+      "source": "road",
+      "target": "emergency",
+      "dependency_type": "서비스 공급",
+      "mechanism_ko": "도로 차단·교통 마비로 구조인력·장비 접근이 지연됨",
+      "activation_time_hour": 0.5,
+      "activation_condition_ko": "도로 통행 차단 및 주변 교통 마비",
+      "D": 0.7,
+      "C": 0.8,
+      "B": 0.3,
+      "tau_hour": 0.3,
+      "evidence_ko": "헬기·도보 접근 및 우회 진입로가 30% 상쇄.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "gasline_to_emergency",
+      "source": "gasline",
+      "target": "emergency",
+      "dependency_type": "정보·제어 / 운영",
+      "mechanism_ko": "폭발 위험으로 구조대 진입이 중단됨",
+      "activation_time_hour": 2.5,
+      "activation_condition_ko": "가스 농도 위험구간 진입, 폭발 발생",
+      "D": 0.55,
+      "C": 0.7,
+      "B": 0.15,
+      "tau_hour": 0.5,
+      "evidence_ko": "방폭장비·가스 차단 성공 시 상쇄 가능하나 현장 실적은 낮음.",
+      "evidence_level": "③ 구조화된 전문가판단"
+    }
+  ],
+  "events": [
+    {
+      "time_hour": 0.25,
+      "label_ko": "교량 붕괴",
+      "label_en": "Bridge collapse",
+      "color": "#DC2626",
+      "label_y": 0.93
+    },
+    {
+      "time_hour": 0.5,
+      "label_ko": "구조·구급 접근 차단",
+      "label_en": "Response access blocked",
+      "color": "#2563EB",
+      "label_y": 0.8
+    },
+    {
+      "time_hour": 2.5,
+      "label_ko": "누출 가스 폭발",
+      "label_en": "Gas explosion",
+      "color": "#B45309",
+      "label_y": 0.93
+    }
+  ],
+  "site": {
+    "name_ko": "서울 서소문 고가차도 일대 (중구 서소문동)",
+    "name_en": "Seosomun overpass area, Seoul",
+    "origin_ko": "기준점: 서소문 고가차도 (약 37.5615 N, 126.9720 E)",
+    "trigger_facility": "bridge",
+    "view": "plan",
+    "axis_note_ko": "평면도(2D). x = 동서 방향 [m], y = 남북 방향 [m], 기준점 기준 상대좌표. 시설물 위치는 공개 지점 기준의 개념 배치이며 실제 시설물 대장 좌표가 아니다.",
+    "basemap": [
+      {
+        "name_ko": "서소문로",
+        "name_en": "Seosomun-ro",
+        "kind": "road",
+        "width": 6.5,
+        "pts": [
+          [
+            -300,
+            -18
+          ],
+          [
+            300,
+            14
+          ]
+        ]
+      },
+      {
+        "name_ko": "통일로",
+        "name_en": "Tongil-ro",
+        "kind": "road",
+        "width": 6.0,
+        "pts": [
+          [
+            -150,
+            -260
+          ],
+          [
+            -120,
+            260
+          ]
+        ]
+      },
+      {
+        "name_ko": "고가차도",
+        "name_en": "Overpass",
+        "kind": "bridge",
+        "width": 5.0,
+        "pts": [
+          [
+            -95,
+            -12
+          ],
+          [
+            110,
+            -2
+          ]
+        ]
+      }
+    ],
+    "osm_key": "seosomun",
+    "basemap_source": "© OpenStreetMap contributors (ODbL), Overpass API 경유"
+  }
+}

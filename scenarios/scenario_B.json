@@ -1,0 +1,400 @@
+{
+  "id": "Scenario B",
+  "title_ko": "노후 하수관·굴착 지반침하 연쇄 (강남·중구 예시)",
+  "title_en": "Excavation and aged sewer ground-subsidence cascade",
+  "subtitle_ko": "지반 붕괴 → 구조물 붕괴 → 설비·동력 상실",
+  "trigger_ko": "대심도 굴착 공사 + 하수관 이음부 장기 누수",
+  "source_ko": "재난안전AI_샘플시나리오_도식_v4_1.pptx, slide 3",
+  "timescale_note_ko": "전조([S] 노드)가 7개로 가장 길다. 굴착 착수부터 함몰까지를 72시간(3일)으로 축약해 해석한다. 실제로는 수주~수개월 규모이며, 해석시간 T가 K의 H(T)항에 직접 들어간다.",
+  "analysis": {
+    "start_hour": 0.0,
+    "end_hour": 72.0,
+    "dt_hour": 0.005,
+    "save_interval_hour": 0.5,
+    "risk_min": 0.0,
+    "risk_max": 1.0,
+    "transfer_form": "diffusive"
+  },
+  "facilities": [
+    {
+      "key": "excavation",
+      "name_ko": "굴착 가설구조물",
+      "name_en": "Excavation support",
+      "color": "#D62728",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[T] 대심도 굴착 공사 · [S] 굴착 응력 재분포 · [S] 흙막이·그라우팅 방호성능 저하. 상부 지반 지지가 이 가설 방호에 단독 의존하는 단일 실패점.",
+      "layout": [
+        0.0,
+        2.0
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          12,
+          24,
+          36,
+          48,
+          60,
+          72
+        ],
+        "value": [
+          0.12,
+          0.2,
+          0.28,
+          0.35,
+          0.41,
+          0.45,
+          0.47
+        ]
+      },
+      "map_xy": [
+        0,
+        120
+      ],
+      "short_ko": "굴착 가설구조물",
+      "short_en": "Excavation",
+      "depth_m": -40.0
+    },
+    {
+      "key": "sewer",
+      "name_ko": "노후 하수관",
+      "name_en": "Aged sewer pipe",
+      "color": "#7C3AED",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[S] 하수관 이음부 장기 누수. 노후도에 따른 평시 기본위험도가 이미 높고, 해석기간 중 완만하게 증가.",
+      "layout": [
+        0.0,
+        0.4
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          12,
+          24,
+          36,
+          48,
+          60,
+          72
+        ],
+        "value": [
+          0.18,
+          0.19,
+          0.205,
+          0.22,
+          0.235,
+          0.245,
+          0.25
+        ]
+      },
+      "map_xy": [
+        245,
+        110
+      ],
+      "short_ko": "노후 하수관",
+      "short_en": "Aged sewer",
+      "depth_m": -3.5
+    },
+    {
+      "key": "ground",
+      "name_ko": "주변 지반",
+      "name_en": "Surrounding ground",
+      "color": "#B45309",
+      "directly_exposed": true,
+      "node_kind": "medium",
+      "note_ko": "[S] 지하수위 저하 · [S] 관로 주변 토사 유실 · [S] 토체 연약화 · [S] 지하 공동 형성. 시설물이 아니라 위험을 매개하는 지반 노드로 별도 취급한다(국토부 지반침하 소관과의 접점).",
+      "layout": [
+        2.3,
+        1.2
+      ],
+      "direct_risk": {
+        "interpolation": "pchip",
+        "time_hour": [
+          0,
+          12,
+          24,
+          36,
+          48,
+          60,
+          72
+        ],
+        "value": [
+          0.09,
+          0.14,
+          0.2,
+          0.26,
+          0.31,
+          0.34,
+          0.355
+        ]
+      },
+      "map_xy": [
+        105,
+        30
+      ],
+      "short_ko": "주변 지반",
+      "short_en": "Ground",
+      "depth_m": -7.0
+    },
+    {
+      "key": "road",
+      "name_ko": "도로 (상부 포장)",
+      "name_en": "Road pavement",
+      "color": "#F59E0B",
+      "directly_exposed": false,
+      "node_kind": "facility",
+      "note_ko": "[D] 도로 함몰·싱크홀 → [F] 도로 통행 차단 → [C] 차량·보행자 추락. 외부 재난에 직접 노출되지 않으며 위험 전량이 지반 전이에서 발생.",
+      "layout": [
+        4.5,
+        1.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          12,
+          24,
+          36,
+          48,
+          60,
+          72
+        ],
+        "value": [
+          0.035,
+          0.036,
+          0.038,
+          0.04,
+          0.042,
+          0.043,
+          0.044
+        ]
+      },
+      "map_xy": [
+        20,
+        -130
+      ],
+      "short_ko": "영동대로 노면",
+      "short_en": "Road surface",
+      "depth_m": 0.0
+    },
+    {
+      "key": "watermain",
+      "name_ko": "매설 급수관",
+      "name_en": "Buried water main",
+      "color": "#16A34A",
+      "directly_exposed": false,
+      "node_kind": "facility",
+      "note_ko": "[D] 매설 급수관 파손 → [F] 상수 공급 중단. 도로 함몰 경로로만 위험이 전달된다.",
+      "layout": [
+        6.6,
+        1.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          12,
+          24,
+          36,
+          48,
+          60,
+          72
+        ],
+        "value": [
+          0.045,
+          0.045,
+          0.046,
+          0.046,
+          0.047,
+          0.047,
+          0.047
+        ]
+      },
+      "map_xy": [
+        175,
+        -195
+      ],
+      "short_ko": "매설 급수관",
+      "short_en": "Water main",
+      "depth_m": -1.8
+    }
+  ],
+  "links": [
+    {
+      "key": "excavation_to_ground",
+      "source": "excavation",
+      "target": "ground",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "굴착에 따른 지하수위 저하와 응력 재분포가 주변 토체를 연약화",
+      "activation_time_hour": 8.0,
+      "activation_condition_ko": "굴착 심도 진행, 지하수 배수 개시",
+      "D": 0.7,
+      "C": 0.65,
+      "B": 0.3,
+      "tau_hour": 10.0,
+      "evidence_ko": "차수그라우팅·리차지웰 등 지하수 관리공법이 약 30% 상쇄.",
+      "evidence_level": "② 공학모형·시뮬레이션"
+    },
+    {
+      "key": "sewer_to_ground",
+      "source": "sewer",
+      "target": "ground",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "하수관 이음부 누수가 관로 주변 토사를 유실시켜 지하 공동을 형성",
+      "activation_time_hour": 0.0,
+      "activation_condition_ko": "상시 누수. 굴착 이전부터 진행 중",
+      "D": 0.55,
+      "C": 0.7,
+      "B": 0.2,
+      "tau_hour": 18.0,
+      "evidence_ko": "서울시 도로함몰 원인 통계에서 하수관 손상 기여도가 최대. 정기 관로조사로 일부 상쇄.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "ground_to_excavation",
+      "source": "ground",
+      "target": "excavation",
+      "dependency_type": "물리적 전달 (역방향)",
+      "mechanism_ko": "토체 연약화가 흙막이·그라우팅 방호성능을 저하시킴 (핵심 의존관계·단일 실패점)",
+      "activation_time_hour": 24.0,
+      "activation_condition_ko": "토체 연약화 계측값이 관리기준 초과",
+      "D": 0.5,
+      "C": 0.6,
+      "B": 0.35,
+      "tau_hour": 12.0,
+      "evidence_ko": "계측관리·긴급보강이 35% 상쇄. 굴착↔지반 양방향 루프를 구성한다.",
+      "evidence_level": "② 공학모형·시뮬레이션"
+    },
+    {
+      "key": "ground_to_road",
+      "source": "ground",
+      "target": "road",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "지하 공동 상부 지지 상실 → 도로 함몰·싱크홀",
+      "activation_time_hour": 36.0,
+      "activation_condition_ko": "공동 규모가 상부 포장 지지 한계를 초과",
+      "D": 0.8,
+      "C": 0.85,
+      "B": 0.1,
+      "tau_hour": 20.0,
+      "evidence_ko": "2025.3 서울 명일동 싱크홀, 2014 석촌 지하차도 도로함몰. 대체수단이 사실상 없어 B가 작다.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "road_to_watermain",
+      "source": "road",
+      "target": "watermain",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "도로 함몰로 매설 급수관 지지 상실 및 부등침하 → 관 파손 → 상수 공급 중단",
+      "activation_time_hour": 54.0,
+      "activation_condition_ko": "함몰부가 급수관 매설 심도에 도달",
+      "D": 0.65,
+      "C": 0.7,
+      "B": 0.1,
+      "tau_hour": 15.0,
+      "evidence_ko": "관망 밸브 차단으로 단수 범위는 줄일 수 있으나 관 파손 자체는 상쇄 불가.",
+      "evidence_level": "① 실제 장애·복구자료"
+    }
+  ],
+  "events": [
+    {
+      "time_hour": 8.0,
+      "label_ko": "지하수위 저하·응력 재분포",
+      "label_en": "Groundwater drawdown",
+      "color": "#475569",
+      "label_y": 0.78
+    },
+    {
+      "time_hour": 24.0,
+      "label_ko": "토체 연약화 → 방호성능 저하",
+      "label_en": "Support degradation ON",
+      "color": "#7C3AED",
+      "label_y": 0.93
+    },
+    {
+      "time_hour": 36.0,
+      "label_ko": "지하공동 → 도로 함몰 링크 ON",
+      "label_en": "Cavity to road link ON",
+      "color": "#DC2626",
+      "label_y": 0.93
+    },
+    {
+      "time_hour": 54.0,
+      "label_ko": "도로 함몰 → 급수관 링크 ON",
+      "label_en": "Road to water main link ON",
+      "color": "#16A34A",
+      "label_y": 0.88
+    }
+  ],
+  "site": {
+    "name_ko": "서울 영동대로 지하공간 복합개발 굴착현장 (강남구 삼성동)",
+    "name_en": "Yeongdong-daero deep excavation site, Seoul",
+    "origin_ko": "기준점: 삼성역 교차로 (약 37.5110 N, 127.0630 E)",
+    "trigger_facility": "excavation",
+    "view": "plan",
+    "axis_note_ko": "평면도(2D). x = 동서 방향 [m], y = 남북 방향 [m], 기준점 기준 상대좌표. 시설물 위치는 공개 지점 기준의 개념 배치이며 실제 시설물 대장 좌표가 아니다.",
+    "basemap": [
+      {
+        "name_ko": "영동대로",
+        "name_en": "Yeongdong-daero",
+        "kind": "road",
+        "width": 7.5,
+        "pts": [
+          [
+            0,
+            -330
+          ],
+          [
+            0,
+            330
+          ]
+        ]
+      },
+      {
+        "name_ko": "테헤란로",
+        "name_en": "Teheran-ro",
+        "kind": "road",
+        "width": 6.0,
+        "pts": [
+          [
+            -380,
+            -20
+          ],
+          [
+            380,
+            -30
+          ]
+        ]
+      },
+      {
+        "name_ko": "굴착 구간",
+        "name_en": "Excavation zone",
+        "kind": "zone",
+        "width": 0,
+        "pts": [
+          [
+            -42,
+            20
+          ],
+          [
+            42,
+            20
+          ],
+          [
+            42,
+            175
+          ],
+          [
+            -42,
+            175
+          ]
+        ]
+      }
+    ],
+    "osm_key": "samseong",
+    "basemap_source": "© OpenStreetMap contributors (ODbL), Overpass API 경유"
+  }
+}

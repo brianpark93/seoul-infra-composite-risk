@@ -1,0 +1,492 @@
+{
+  "id": "Scenario A",
+  "title_ko": "강남역 집중호우 침수 연쇄 (강남·중구 예시)",
+  "title_en": "Gangnam heavy-rain inundation cascade",
+  "subtitle_ko": "기상재해 → 침수·범람 → 설비·동력 상실 → 교통사고",
+  "trigger_ko": "집중호우 100 mm/h",
+  "source_ko": "재난안전AI_샘플시나리오_도식_v4_1.pptx, slide 2",
+  "timescale_note_ko": "호우 사상 1회 지속시간을 기준으로 8시간 해석. 260918 발표의 예시 시나리오와 동일 축척.",
+  "analysis": {
+    "start_hour": 0.0,
+    "end_hour": 8.0,
+    "dt_hour": 0.001,
+    "save_interval_hour": 0.1,
+    "risk_min": 0.0,
+    "risk_max": 1.0,
+    "transfer_form": "diffusive"
+  },
+  "facilities": [
+    {
+      "key": "sewer",
+      "name_ko": "하수관로",
+      "name_en": "Sewer pipeline",
+      "color": "#D62728",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[S] 하수관로 통수능력 부족 · [S] 노후 하수관 누수. 침수재난에 직접 노출되며 본 시나리오의 1차 피해 집중 시설.",
+      "layout": [
+        0.0,
+        1.8
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "value": [
+          0.07,
+          0.15,
+          0.38,
+          0.62,
+          0.78,
+          0.84,
+          0.87,
+          0.89
+        ]
+      },
+      "map_xy": [
+        -30,
+        250
+      ],
+      "short_ko": "하수관로",
+      "short_en": "Sewer",
+      "depth_m": -4.0
+    },
+    {
+      "key": "road",
+      "name_ko": "강남대로 도로",
+      "name_en": "Gangnam-daero road",
+      "color": "#F59E0B",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[D] 강남대로 도로 침수 · [D] 강남대로 도로 함몰. 지표 침수에 직접 노출되고, 하수관로로부터 월류(침수)와 지하공동(지반) 두 경로로 전이를 받는 허브 노드.",
+      "layout": [
+        2.2,
+        1.8
+      ],
+      "direct_risk": {
+        "interpolation": "pchip",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "value": [
+          0.03,
+          0.045,
+          0.08,
+          0.13,
+          0.23,
+          0.32,
+          0.4,
+          0.48
+        ]
+      },
+      "map_xy": [
+        0,
+        60
+      ],
+      "short_ko": "강남대로 노면",
+      "short_en": "Road surface",
+      "depth_m": 0.0
+    },
+    {
+      "key": "underpass",
+      "name_ko": "지하차도",
+      "name_en": "Underpass",
+      "color": "#0891B2",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[F] 지하차도 침수 → [C] 차량 고립. 자체 강우 유입은 작고 도로면 유입이 지배적.",
+      "layout": [
+        4.4,
+        3.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "value": [
+          0.035,
+          0.05,
+          0.075,
+          0.1,
+          0.13,
+          0.15,
+          0.165,
+          0.18
+        ]
+      },
+      "map_xy": [
+        70,
+        -330
+      ],
+      "short_ko": "지하차도",
+      "short_en": "Underpass",
+      "depth_m": -6.0
+    },
+    {
+      "key": "substation",
+      "name_ko": "변전소 지하 전기실",
+      "name_en": "Substation basement",
+      "color": "#7C3AED",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[D] 변전소 지하 전기실 침수 → [F] 급전구역 정전. 차수시설이 있어 직접 노출 위험은 낮으나 도로 침수 유입에 취약.",
+      "layout": [
+        4.4,
+        1.8
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "value": [
+          0.025,
+          0.03,
+          0.035,
+          0.042,
+          0.05,
+          0.056,
+          0.06,
+          0.065
+        ]
+      },
+      "map_xy": [
+        -230,
+        150
+      ],
+      "short_ko": "지하 전기실",
+      "short_en": "Substation",
+      "depth_m": -9.0
+    },
+    {
+      "key": "subway",
+      "name_ko": "지하철 역사·선로",
+      "name_en": "Subway station",
+      "color": "#2563EB",
+      "directly_exposed": true,
+      "node_kind": "facility",
+      "note_ko": "[D] 지하철 역사·선로 침수 → [F] 2호선·9호선 운행중단 → [C] 승객 고립.",
+      "layout": [
+        2.2,
+        0.0
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "value": [
+          0.03,
+          0.038,
+          0.048,
+          0.058,
+          0.07,
+          0.078,
+          0.085,
+          0.09
+        ]
+      },
+      "map_xy": [
+        59,
+        -159
+      ],
+      "short_ko": "지하철 역사",
+      "short_en": "Subway",
+      "depth_m": -18.0,
+      "coord_basis_ko": "OpenStreetMap 실제 지형지물에 스냅 (railway=station / waterway)"
+    },
+    {
+      "key": "watermain",
+      "name_ko": "매설 상수관",
+      "name_en": "Buried water main",
+      "color": "#16A34A",
+      "directly_exposed": false,
+      "node_kind": "facility",
+      "note_ko": "[D] 매설 상수관 파손 → [F] 상수 공급 중단. 침수에는 직접 노출되지 않으며, 도로 함몰이라는 정의된 전이경로로만 위험이 증가한다(KAIST 개념문서 6절).",
+      "layout": [
+        4.4,
+        0.4
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "value": [
+          0.04,
+          0.04,
+          0.041,
+          0.041,
+          0.042,
+          0.042,
+          0.043,
+          0.043
+        ]
+      },
+      "map_xy": [
+        270,
+        35
+      ],
+      "short_ko": "매설 상수관",
+      "short_en": "Water main",
+      "depth_m": -2.5
+    }
+  ],
+  "links": [
+    {
+      "key": "sewer_to_road_flood",
+      "source": "sewer",
+      "target": "road",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "통수능력 초과에 따른 맨홀 역류·월류가 도로면 침수심을 직접 증가시킴",
+      "activation_time_hour": 3.0,
+      "activation_condition_ko": "하수관로 통수능력 초과, 지표 월류 개시",
+      "D": 0.55,
+      "C": 0.8,
+      "B": 0.15,
+      "tau_hour": 0.8,
+      "evidence_ko": "도로 침수심 중 관로 월류 기여분(나머지는 직접 강우). 배수펌프장 가동으로 일부 상쇄.",
+      "evidence_level": "③ 구조화된 전문가판단"
+    },
+    {
+      "key": "sewer_to_road_ground",
+      "source": "sewer",
+      "target": "road",
+      "dependency_type": "물리적 전달 (지반)",
+      "mechanism_ko": "노후 하수관 누수 → 관로 주변 토사 유실 → 지하공동 형성 → 도로 함몰",
+      "activation_time_hour": 6.0,
+      "activation_condition_ko": "지하공동 형성 확인, 상부 포장 지지력 저하",
+      "D": 0.3,
+      "C": 0.7,
+      "B": 0.25,
+      "tau_hour": 4.0,
+      "evidence_ko": "2014 석촌 지하차도 도로함몰, 2025.3 명일동 싱크홀 계열. 발현 시정수가 길어 H(T)가 1에 못 미침.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "road_to_underpass",
+      "source": "road",
+      "target": "underpass",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "도로면 유수가 지하차도 진입부로 집중 유입",
+      "activation_time_hour": 3.5,
+      "activation_condition_ko": "도로 침수심이 진입부 연석고를 초과",
+      "D": 0.85,
+      "C": 0.9,
+      "B": 0.3,
+      "tau_hour": 0.3,
+      "evidence_ko": "지하차도 침수의 거의 전량이 도로면 유입. 진입차단시설·배수펌프가 30% 상쇄.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "road_to_substation",
+      "source": "road",
+      "target": "substation",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "도로 침수수가 지하 전기실 출입구·환기구로 유입",
+      "activation_time_hour": 4.0,
+      "activation_condition_ko": "도로 침수심이 지하 개구부 기준고를 초과",
+      "D": 0.7,
+      "C": 0.85,
+      "B": 0.45,
+      "tau_hour": 0.6,
+      "evidence_ko": "차수판·방수문·배수설비가 약 45% 상쇄한다고 가정.",
+      "evidence_level": "③ 구조화된 전문가판단"
+    },
+    {
+      "key": "road_to_subway",
+      "source": "road",
+      "target": "subway",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "도로 침수수가 역사 출입구·환기구를 통해 역사·선로로 유입",
+      "activation_time_hour": 4.0,
+      "activation_condition_ko": "도로 침수심이 출입구 방수턱을 초과",
+      "D": 0.65,
+      "C": 0.8,
+      "B": 0.4,
+      "tau_hour": 0.5,
+      "evidence_ko": "2022.8 강남역 일대 침수 시 역사 유입 사례. 물막이판·집수정이 40% 상쇄.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "road_to_watermain",
+      "source": "road",
+      "target": "watermain",
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "도로 함몰·침하로 매설 상수관에 부등침하 하중이 작용하여 관 파손",
+      "activation_time_hour": 6.0,
+      "activation_condition_ko": "도로 함몰 발생, 매설관 상부 지지 상실",
+      "D": 0.6,
+      "C": 0.65,
+      "B": 0.1,
+      "tau_hour": 3.0,
+      "evidence_ko": "함몰-매설관 파손은 대체수단이 거의 없어 B가 작음. 발현에 수 시간 소요.",
+      "evidence_level": "① 실제 장애·복구자료"
+    },
+    {
+      "key": "subway_to_road",
+      "source": "subway",
+      "target": "road",
+      "dependency_type": "서비스 공급 (대체수요)",
+      "mechanism_ko": "2호선·9호선 운행중단 → 승객 수요가 도로로 전환되어 도로 기능부하 가중",
+      "activation_time_hour": 5.0,
+      "activation_condition_ko": "역사 운행중단 결정, 대체 교통수요 발생",
+      "D": 0.25,
+      "C": 0.55,
+      "B": 0.35,
+      "tau_hour": 1.0,
+      "evidence_ko": "도로 기능저하 중 전환수요 기여분은 제한적. 버스 증차·우회로가 35% 상쇄.",
+      "evidence_level": "③ 구조화된 전문가판단"
+    }
+  ],
+  "events": [
+    {
+      "time_hour": 1.0,
+      "label_ko": "집중호우 시작",
+      "label_en": "Heavy rain starts",
+      "color": "#475569",
+      "label_y": 0.78
+    },
+    {
+      "time_hour": 3.0,
+      "label_ko": "하수관로 통수능력 초과",
+      "label_en": "Sewer capacity exceeded",
+      "color": "#DC2626",
+      "label_y": 0.93
+    },
+    {
+      "time_hour": 4.0,
+      "label_ko": "도로→지하시설 링크 ON",
+      "label_en": "Road to underground links ON",
+      "color": "#2563EB",
+      "label_y": 0.88
+    },
+    {
+      "time_hour": 6.0,
+      "label_ko": "지하공동·도로함몰 링크 ON",
+      "label_en": "Sinkhole links ON",
+      "color": "#B45309",
+      "label_y": 0.93
+    }
+  ],
+  "site": {
+    "name_ko": "서울 강남역 일대 (서초구 서초동·강남구 역삼동)",
+    "name_en": "Gangnam Station area, Seoul",
+    "origin_ko": "기준점: 강남역 사거리 (약 37.4979 N, 127.0276 E)",
+    "trigger_facility": "sewer",
+    "view": "plan",
+    "axis_note_ko": "평면도(2D). x = 동서 방향 [m], y = 남북 방향 [m], 기준점 기준 상대좌표. 시설물 위치는 공개 지점 기준의 개념 배치이며 실제 시설물 대장 좌표가 아니다.",
+    "basemap": [
+      {
+        "name_ko": "강남대로",
+        "name_en": "Gangnam-daero",
+        "kind": "road",
+        "width": 7.0,
+        "pts": [
+          [
+            0,
+            -430
+          ],
+          [
+            0,
+            430
+          ]
+        ]
+      },
+      {
+        "name_ko": "테헤란로",
+        "name_en": "Teheran-ro",
+        "kind": "road",
+        "width": 6.0,
+        "pts": [
+          [
+            0,
+            0
+          ],
+          [
+            620,
+            -10
+          ]
+        ]
+      },
+      {
+        "name_ko": "서초대로",
+        "name_en": "Seocho-daero",
+        "kind": "road",
+        "width": 6.0,
+        "pts": [
+          [
+            -620,
+            10
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "name_ko": "2호선",
+        "name_en": "Line 2",
+        "kind": "rail",
+        "width": 2.4,
+        "pts": [
+          [
+            -620,
+            -25
+          ],
+          [
+            620,
+            -35
+          ]
+        ]
+      }
+    ],
+    "osm_key": "gangnam",
+    "basemap_source": "© OpenStreetMap contributors (ODbL), Overpass API 경유"
+  }
+}

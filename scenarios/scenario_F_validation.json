@@ -1,0 +1,362 @@
+{
+  "id": "Scenario F",
+  "title_ko": "집중호우-토석류 (260918 발표 재현 · 검증용)",
+  "title_en": "Heavy rain and debris flow (260918 reproduction)",
+  "subtitle_ko": "성균관대 제공 예시 시나리오 · 엔진 검증 기준값",
+  "trigger_ko": "집중호우 + 토석류",
+  "source_ko": "260917-성대카이스트 개별미팅/gif/ (make_complex_risk.py, README.md)",
+  "timescale_note_ko": "본 패키지의 해석엔진이 260918 발표 결과를 그대로 재현하는지 확인하는 검증 케이스. K는 산정식으로 유도하지 않고 기존 값을 그대로 입력한다. 입력 직접위험도는 원본 direct_facility_risk_timeseries.csv 의 0~8h 1시간 간격 9개 점을 그대로 사용한다(README 표는 사건 시점만 발췌한 것).",
+  "validation": {
+    "expected_final_composite": {
+      "drainage": 0.85,
+      "subway": 0.770063,
+      "road": 1.0,
+      "housing": 0.994266
+    },
+    "tolerance": 1e-05,
+    "source_ko": "gif/composite_risk_timeseries.csv 최종행 (t=8.0h)"
+  },
+  "analysis": {
+    "start_hour": 0.0,
+    "end_hour": 8.0,
+    "dt_hour": 0.001,
+    "save_interval_hour": 0.1,
+    "risk_min": 0.0,
+    "risk_max": 1.0,
+    "transfer_form": "diffusive"
+  },
+  "facilities": [
+    {
+      "key": "drainage",
+      "name_ko": "하수·배수시설",
+      "name_en": "Drainage",
+      "color": "#D62728",
+      "directly_exposed": true,
+      "layout": [
+        0.0,
+        1.4
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "value": [
+          0.006,
+          0.006,
+          0.03,
+          0.3,
+          0.65,
+          0.78,
+          0.82,
+          0.84,
+          0.85
+        ]
+      },
+      "map_xy": [
+        -250,
+        150
+      ],
+      "short_ko": "하수·배수시설",
+      "short_en": "Drainage",
+      "depth_m": -4.0
+    },
+    {
+      "key": "subway",
+      "name_ko": "지하철역사",
+      "name_en": "Subway station",
+      "color": "#2563EB",
+      "directly_exposed": true,
+      "layout": [
+        2.3,
+        2.2
+      ],
+      "direct_risk": {
+        "interpolation": "linear",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "value": [
+          0.0035,
+          0.0035,
+          0.01,
+          0.03,
+          0.07,
+          0.11,
+          0.15,
+          0.18,
+          0.21
+        ]
+      },
+      "map_xy": [
+        280,
+        -160
+      ],
+      "short_ko": "지하철역사",
+      "short_en": "Subway",
+      "depth_m": -16.0
+    },
+    {
+      "key": "road",
+      "name_ko": "도로",
+      "name_en": "Road",
+      "color": "#F59E0B",
+      "directly_exposed": true,
+      "layout": [
+        2.3,
+        0.6
+      ],
+      "direct_risk": {
+        "interpolation": "pchip",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "value": [
+          0.003,
+          0.003,
+          0.015,
+          0.045,
+          0.08,
+          0.12,
+          0.15,
+          0.55,
+          0.69
+        ]
+      },
+      "map_xy": [
+        10,
+        0
+      ],
+      "short_ko": "남부순환로 노면",
+      "short_en": "Road surface",
+      "depth_m": 0.0
+    },
+    {
+      "key": "housing",
+      "name_ko": "주택",
+      "name_en": "Housing",
+      "color": "#16A34A",
+      "directly_exposed": true,
+      "layout": [
+        4.6,
+        1.4
+      ],
+      "direct_risk": {
+        "interpolation": "pchip",
+        "time_hour": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "value": [
+          0.0031,
+          0.0031,
+          0.012,
+          0.035,
+          0.065,
+          0.1,
+          0.13,
+          0.5,
+          0.64
+        ]
+      },
+      "map_xy": [
+        -180,
+        -250
+      ],
+      "short_ko": "주택",
+      "short_en": "Housing",
+      "depth_m": 0.0
+    }
+  ],
+  "links": [
+    {
+      "key": "drainage_to_subway",
+      "source": "drainage",
+      "target": "subway",
+      "K_per_hour": 0.483,
+      "activation_time_hour": 4.0,
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "배수용량 초과에 따른 역류가 역사로 유입",
+      "activation_condition_ko": "Drainage capacity exceeded and inflow path active",
+      "evidence_ko": "260918 발표 산정치 그대로 사용",
+      "evidence_level": "기존 산정치"
+    },
+    {
+      "key": "drainage_to_road",
+      "source": "drainage",
+      "target": "road",
+      "K_per_hour": 0.282,
+      "activation_time_hour": 4.0,
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "월류가 도로 구역에 도달",
+      "activation_condition_ko": "Overflow reaches road area",
+      "evidence_ko": "260918 발표 산정치 그대로 사용",
+      "evidence_level": "기존 산정치"
+    },
+    {
+      "key": "subway_to_road",
+      "source": "subway",
+      "target": "road",
+      "K_per_hour": 0.141,
+      "activation_time_hour": 5.0,
+      "dependency_type": "서비스 공급",
+      "mechanism_ko": "역사 운행중단으로 승객이 도로로 전환",
+      "activation_condition_ko": "Station service interruption diverts passengers to road",
+      "evidence_ko": "260918 발표 산정치 그대로 사용",
+      "evidence_level": "기존 산정치"
+    },
+    {
+      "key": "drainage_to_housing",
+      "source": "drainage",
+      "target": "housing",
+      "K_per_hour": 0.283,
+      "activation_time_hour": 4.0,
+      "dependency_type": "물리적 전달",
+      "mechanism_ko": "역류 또는 월류가 주택지에 도달",
+      "activation_condition_ko": "Backflow or overflow reaches housing area",
+      "evidence_ko": "260918 발표 산정치 그대로 사용",
+      "evidence_level": "기존 산정치"
+    },
+    {
+      "key": "road_to_housing",
+      "source": "road",
+      "target": "housing",
+      "K_per_hour": 0.154,
+      "activation_time_hour": 6.0,
+      "dependency_type": "서비스 공급",
+      "mechanism_ko": "도로 단절로 주택 접근성 저하",
+      "activation_condition_ko": "Road disruption reduces housing access",
+      "evidence_ko": "260918 발표 산정치 그대로 사용",
+      "evidence_level": "기존 산정치"
+    }
+  ],
+  "events": [
+    {
+      "time_hour": 2.0,
+      "label_ko": "집중호우 시작",
+      "label_en": "Heavy rain starts",
+      "color": "#475569",
+      "label_y": 0.78
+    },
+    {
+      "time_hour": 4.0,
+      "label_ko": "배수 링크 ON",
+      "label_en": "Drainage links ON",
+      "color": "#DC2626",
+      "label_y": 0.93
+    },
+    {
+      "time_hour": 5.0,
+      "label_ko": "지하철→도로 ON",
+      "label_en": "Subway to road ON",
+      "color": "#2563EB",
+      "label_y": 0.88
+    },
+    {
+      "time_hour": 6.0,
+      "label_ko": "토석류 · 도로→주택 ON",
+      "label_en": "Debris flow / Road to housing ON",
+      "color": "#B45309",
+      "label_y": 0.93
+    }
+  ],
+  "site": {
+    "name_ko": "서울 우면산 북측 남부순환로 일대 (서초구)",
+    "name_en": "Umyeonsan north slope, Seoul",
+    "origin_ko": "기준점: 남부순환로·우면산 자락 (약 37.4750 N, 127.0080 E) · 근거사례는 2011.7 우면산 토석류",
+    "trigger_facility": "drainage",
+    "view": "plan",
+    "axis_note_ko": "평면도(2D). x = 동서 방향 [m], y = 남북 방향 [m], 기준점 기준 상대좌표. 시설물 위치는 공개 지점 기준의 개념 배치이며 실제 시설물 대장 좌표가 아니다.",
+    "basemap": [
+      {
+        "name_ko": "남부순환로",
+        "name_en": "Nambusunhwan-ro",
+        "kind": "road",
+        "width": 7.0,
+        "pts": [
+          [
+            -460,
+            -25
+          ],
+          [
+            460,
+            15
+          ]
+        ]
+      },
+      {
+        "name_ko": "우면산 사면",
+        "name_en": "Umyeonsan slope",
+        "kind": "slope",
+        "width": 0,
+        "pts": [
+          [
+            -420,
+            250
+          ],
+          [
+            -120,
+            330
+          ],
+          [
+            180,
+            300
+          ],
+          [
+            430,
+            205
+          ]
+        ]
+      },
+      {
+        "name_ko": "주택가 진입로",
+        "name_en": "Residential access",
+        "kind": "road",
+        "width": 4.0,
+        "pts": [
+          [
+            -120,
+            -30
+          ],
+          [
+            -150,
+            -290
+          ]
+        ]
+      }
+    ],
+    "osm_key": "umyeon",
+    "basemap_source": "© OpenStreetMap contributors (ODbL), Overpass API 경유"
+  }
+}

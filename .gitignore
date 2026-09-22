@@ -1,0 +1,11 @@
+# 해석 산출물 — 190 MB. 스크립트로 언제든 재생성되므로 커밋하지 않는다.
+outputs/
+
+# OSM 원본 응답 캐시 (fetch_osm_basemap.py 중간산물)
+data/osm/_raw_*.json
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
