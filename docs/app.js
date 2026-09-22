@@ -12,8 +12,7 @@
 'use strict';
 
 /* ---------- 위험도 램프 (matplotlib 렌더러와 동일) ---------- */
-const RAMP = ['#fde5e0','#fbd2ca','#f9bcb1','#f5a393','#ef8975','#e66f5a',
-              '#d95441','#c83f30','#b32f24','#9b241c','#811c16','#671611','#4d100c'];
+const RAMP = ['#1a9850','#52b151','#86c96a','#b7e07d','#d9ef8b','#ffffbf','#fee999','#fdc877','#fca55a','#f57547','#e34a33','#c22b26','#a50026'];
 const RAMP_RGB = RAMP.map(h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16),
                                 parseInt(h.slice(5,7),16)]);
 const BANDS = [[0,'관심'],[0.25,'주의'],[0.5,'경계'],[0.75,'심각']];
@@ -25,7 +24,15 @@ function rampRGB(v) {
   return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f];
 }
 const rampCSS = v => { const c = rampRGB(v).map(Math.round); return `rgb(${c[0]},${c[1]},${c[2]})`; };
-const inkOn = v => v >= 0.42 ? '#fff' : '#0b0b0b';
+/* 고정 임계 대신 대비를 계산해 고른다. 노랑이 가운데라 임계 하나로는 안 맞는다. */
+function relLum(rgb) {
+  const ch = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+  return 0.2126 * ch(rgb[0]) + 0.7152 * ch(rgb[1]) + 0.0722 * ch(rgb[2]);
+}
+const inkOn = v => {
+  const L = relLum(rampRGB(v));
+  return (1.05 / (L + 0.05)) >= ((L + 0.05) / 0.0561) ? '#fff' : '#0b0b0b';
+};
 
 /* ---------- 지도 팔레트 ---------- */
 const MAP = {
