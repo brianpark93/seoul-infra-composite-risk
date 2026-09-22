@@ -26,9 +26,9 @@
         · 컬러바에 관심/주의/경계/심각 등급명을 글자로 표기
 
 노드 표현
-    바깥 고리 = 직접위험도 R_direct   (상호의존을 고려하지 않았을 때의 값)
-    안쪽 원   = 복합위험도 R_composite (상호의존 반영)
-    두 색이 벌어진 정도가 곧 상호의존성지수 I 다.
+    원 하나를 표시값으로 칠한다. 복합위험도 지도는 R_composite, 상호의존 고려 X
+    지도는 R_direct. 둘을 한 노드에 겹쳐 그리지 않는다 (비교 GIF 와 웹 토글로 본다).
+    테두리 실선 = 지상, 점선 = 지하.
 """
 
 from __future__ import annotations
@@ -282,18 +282,17 @@ def _draw_nodes(ax, scenario: Scenario, lang: str, *, base=1, compact=False):
     """도넛 노드(바깥=직접, 안쪽=복합) + 라벨. 갱신용 아티스트를 돌려준다."""
     xs = np.array([f.map_xy[0] for f in scenario.facilities], dtype=float)
     ys = np.array([f.map_xy[1] for f in scenario.facilities], dtype=float)
-    s_out = (2050 if not compact else 1000) * base
-    s_in = (980 if not compact else 470) * base
+    # 노드는 단일 원이다. 직접위험도는 상단 토글(상호의존 O/X)로 비교한다.
+    s_out = (1500 if not compact else 760) * base
     # 평면도에는 표고축이 없으므로 심도를 테두리 선종류로 구분한다.
     # 실선 = 지상/지표, 점선 = 지하 매설·지하구조물.
     styles = ["dashed" if f.depth_m < 0 else "solid" for f in scenario.facilities]
     outer = ax.scatter(xs, ys, s=s_out, c=["#ffffff"] * len(xs),
-                       edgecolors="#3b3a37", linewidths=1.4,
+                       edgecolors="#3b3a37", linewidths=1.5,
                        linestyle="solid", zorder=5)
     outer.set_linestyle([(0, (2.6, 1.9)) if st == "dashed" else (0, ())
                          for st in styles])
-    inner = ax.scatter(xs, ys, s=s_in, c=["#ffffff"] * len(xs),
-                       edgecolors="none", zorder=6)
+    inner = None
     # 세로로 겹치는 노드는 이름표를 아래로 내려 서로 가리지 않게 한다.
     x_span = ax.get_xlim()[1] - ax.get_xlim()[0]
     y_span = ax.get_ylim()[1] - ax.get_ylim()[0]
@@ -338,8 +337,12 @@ def _draw_nodes(ax, scenario: Scenario, lang: str, *, base=1, compact=False):
 
 
 def _update_nodes(outer, inner, value_texts, direct_v, comp_v):
-    outer.set_facecolor([risk_color(v) for v in direct_v])
-    inner.set_facecolor([risk_color(v) for v in comp_v])
+    """노드를 표시값(comp_v) 하나로 칠한다.
+
+    직접위험도는 별도 고리로 그리지 않는다. 상호의존 고려 X 지도를 따로 그리거나
+    (비교 GIF) 웹에서 토글하면 되고, 고리를 겹치면 지도가 시끄러워진다.
+    """
+    outer.set_facecolor([risk_color(v) for v in comp_v])
     for i, t in enumerate(value_texts):
         t.set_text(f"{comp_v[i]:.2f}")
         t.set_color(_text_on(comp_v[i]))
@@ -449,7 +452,7 @@ def riskmap_gif(scenario: Scenario, result: Result, out_path: Path,
                           else scenario.site["name_en"]),
              fontsize=12.5, color=SECOND)
     fig.text(0.055, 0.872,
-             ("바깥 고리 = 직접위험도(상호의존 X) · 안쪽 원 = 복합위험도(O) · 점선 테두리 = 지하 시설물 · "
+             ("숫자 = 복합위험도 · 점선 테두리 = 지하 시설물 · "
               "붉은 화살표 = 전달 발생 중, 굵기 ∝ 순간 전달률"
               if lang == "ko" else
               "Outer ring = direct risk · Inner disc = composite risk · "
@@ -649,8 +652,8 @@ def riskmap_snapshots(scenario: Scenario, result: Result, out_path: Path,
                           else scenario.site["name_en"]),
              fontsize=11.5, color=SECOND, va="center")
     fig.text(0.035, 1 - 1.05 / h,
-             ("바깥 고리 = 직접위험도(상호의존 X) · 안쪽 원 = 복합위험도(O) · "
-              "숫자 = 복합위험도 · 점선 테두리 = 지하 시설물 · 붉은 화살표 = 전달 발생 중"
+             ("숫자 = 복합위험도 · 점선 테두리 = 지하 시설물 · 붉은 화살표 = 전달 발생 중 · "
+              "직접위험도는 좌우 비교 GIF 참조"
               if lang == "ko" else
               "Outer ring = direct risk · Inner disc = composite risk · "
               "number = composite · red arrow = active transfer"),

@@ -300,15 +300,14 @@ function render() {
   g.textAlign = 'center'; g.textBaseline = 'middle';
   scn.facilities.forEach((f, k) => {
     const X = view.X(f.xy[0]), Y = view.Y(f.xy[1]);
-    const ro = 22, ri = 15;
-    g.beginPath(); g.arc(X, Y, ro, 0, 7);
-    g.fillStyle = rampCSS(dir[k]); g.fill();
-    g.lineWidth = (k === S.sel || k === S.hover) ? 2.6 : 1.4;
+    // 노드는 단일 원. 직접위험도는 상단 '상호의존 전이 반영' 토글로 비교한다.
+    const r = 19;
+    g.beginPath(); g.arc(X, Y, r, 0, 7);
+    g.fillStyle = rampCSS(shown[k]); g.fill();
+    g.lineWidth = (k === S.sel || k === S.hover) ? 2.8 : 1.5;
     g.strokeStyle = (k === S.sel || k === S.hover) ? '#0b0b0b' : '#3b3a37';
     if (f.depth < 0) g.setLineDash([3.2, 2.2]);
     g.stroke(); g.setLineDash([]);
-    g.beginPath(); g.arc(X, Y, ri, 0, 7);
-    g.fillStyle = rampCSS(shown[k]); g.fill();
     g.font = '700 11px "Malgun Gothic", sans-serif';
     g.fillStyle = inkOn(shown[k]); g.fillText(shown[k].toFixed(2), X, Y + 0.5);
 
@@ -316,7 +315,7 @@ function render() {
     const dep = f.depth < 0 ? `GL-${Math.abs(f.depth)} m` : (f.depth > 0 ? `GL+${f.depth} m` : '');
     g.font = '700 11px "Malgun Gothic", sans-serif';
     const wd = Math.max(g.measureText(lbl).width, dep ? g.measureText(dep).width : 0);
-    const ty = Y - ro - (dep ? 24 : 13);
+    const ty = Y - r - (dep ? 24 : 13);
     g.fillStyle = 'rgba(252,252,251,0.88)';
     g.fillRect(X - wd/2 - 4, ty - 8, wd + 8, dep ? 27 : 16);
     g.fillStyle = '#0b0b0b'; g.fillText(lbl, X, ty);
@@ -574,7 +573,7 @@ function writeHash() {
   const pick = (e) => {
     const r = cv.getBoundingClientRect();
     const px = e.clientX - r.left, py = e.clientY - r.top;
-    let best = -1, bd = 26 * 26;
+    let best = -1, bd = 23 * 23;
     S.scn.facilities.forEach((f, k) => {
       const d = (S.view.X(f.xy[0]) - px) ** 2 + (S.view.Y(f.xy[1]) - py) ** 2;
       if (d < bd) { bd = d; best = k; }
